@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+                  <!-- flixbridge_v14_fixed.html by kimi -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>FlixBridge — Free Streaming Trials</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- HilltopAds verification meta tags -->
+  <meta name="3a5bbb69070039bf39de64a8cffb69c532c50269" content="3a5bbb69070039bf39de64a8cffb69c532c50269" />
+  <meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <!-- OneSignal SDK -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --white: #ffffff;
+      --surface: #eef1f8;
+      --border: #dde2ef;
+      --blue: #2563eb;
+      --blue-light: #3b7eff;
+      --blue-dim: rgba(37,99,235,0.08);
+      --blue-glow: rgba(37,99,235,0.25);
+      --teal: #0ea5b0;
+      --green: #16a34a;
+      --green-dim: rgba(22,163,74,0.08);
+      --amber: #d97706;
+      --amber-dim: rgba(217,119,6,0.08);
+      --text: #0f1523;
+      --text-2: #374151;
+      --muted: #6b7280;
+      --muted-light: #9ca3af;
+      --font: 'Plus Jakarta Sans', sans-serif;
+      --radius: 12px;
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .page-wrap {
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0 12px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-icon {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--teal) 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon svg { width: 14px; height: 14px; fill: white; }
+
+    .logo-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .logo-text span { color: var(--blue); }
+
+    .ssl-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+      background: var(--green-dim);
+      border: 1px solid rgba(22,163,74,0.2);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .scarcity-bar {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(217,119,6,0.08) 0%, rgba(217,119,6,0.04) 100%);
+      border: 1px solid rgba(217,119,6,0.2);
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .scarcity-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--amber);
+      flex-shrink: 0;
+      animation: pulse-amber 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulse-amber {
+      0%,100% { box-shadow: 0 0 0 0 rgba(217,119,6,0.4); }
+      50% { box-shadow: 0 0 0 5px transparent; }
+    }
+
+    .library-scan {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .scan-text { flex: 1; z-index: 1; }
+
+    .scan-progress {
+      width: 60px; height: 4px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .scan-progress-bar {
+      width: 0%; height: 100%;
+      background: var(--blue);
+      border-radius: 4px;
+      animation: scanProgress 2s ease-out forwards;
+    }
+
+    .library-scan::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(37,99,235,0.1), transparent);
+      animation: scanShine 2s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes scanProgress {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    @keyframes scanShine {
+      0% { left: -100%; }
+      100% { left: 200%; }
+    }
+
+    .main-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #0369a1 100%);
+      padding: 20px 20px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 16px;
+      background: var(--white);
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+
+    .header-eyebrow {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 6px;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      line-height: 1.2;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    .header-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.4;
+    }
+
+    .progress-section {
+      padding: 16px 20px 0;
+    }
+
+    .steps-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 12px;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: calc(50% + 12px);
+      width: calc(100% - 24px);
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+
+    .step.done:not(:last-child)::after { background: var(--blue); }
+
+    .step-circle {
+      width: 24px; height: 24px; border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step.done .step-circle { background: var(--blue); color: white; }
+
+    .step.active .step-circle {
+      background: var(--blue); color: white;
+      box-shadow: 0 0 0 3px var(--blue-dim);
+      animation: step-pulse 1.6s infinite;
+    }
+
+    .step.pending .step-circle {
+      background: var(--surface);
+      color: var(--muted-light);
+      border: 2px solid var(--border);
+    }
+
+    @keyframes step-pulse {
+      0%,100% { box-shadow: 0 0 0 3px var(--blue-dim); }
+      50% { box-shadow: 0 0 0 6px transparent; }
+    }
+
+    .step-label {
+      font-size: 9px;
+      font-weight: 500;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .step.active .step-label, .step.done .step-label { color: var(--text-2); }
+
+    .info-section {
+      padding: 0 20px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+    }
+
+    .info-row:last-child { border-bottom: none; }
+
+    .info-icon {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: var(--blue-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .info-icon svg { width: 14px; height: 14px; stroke: var(--blue); fill: none; stroke-width: 2; }
+    .info-content { flex: 1; }
+    .info-label { font-size: 10px; color: var(--muted); font-weight: 500; }
+    .info-value { font-size: 13px; font-weight: 600; color: var(--text); }
+
+    .info-status {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .status-ok { background: var(--green-dim); color: var(--green); }
+
+    .card-body {
+      padding: 12px 20px 16px;
+    }
+
+    .guide-text {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .guide-text::before {
+      content: '1';
+      width: 18px; height: 18px;
+      background: var(--blue);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .guide-text.step-2::before { content: '2'; background: var(--green); }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .cat-btn {
+      padding: 10px 4px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-2);
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .cat-btn:hover, .cat-btn.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white;
+      box-shadow: 0 0 0 3px var(--blue-dim);
+    }
+
+    .cat-btn .emoji { display: block; font-size: 18px; margin-bottom: 2px; }
+
+    .cta-btn {
+      width: 100%;
+      padding: 14px 20px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--muted);
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: not-allowed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+
+    .cta-btn.ready {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      border-color: transparent;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 16px var(--blue-glow);
+      animation: cta-ready 2s ease-in-out infinite;
+    }
+
+    @keyframes cta-ready {
+      0%,100% { box-shadow: 0 4px 16px var(--blue-glow); }
+      50% { box-shadow: 0 4px 24px rgba(37,99,235,0.4); }
+    }
+
+    .cta-btn.ready:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(37,99,235,0.5);
+    }
+
+    .proof-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .proof-faces { display: flex; }
+
+    .face {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid var(--white);
+      margin-left: -6px;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .face:first-child { margin-left: 0; }
+    .f1 { background: #fbbf24; color: #5a3a00; }
+    .f2 { background: #34d399; color: #064e3b; }
+    .f3 { background: #60a5fa; color: #1e3a8a; }
+
+    .proof-text { font-size: 12px; color: var(--text-2); }
+    .proof-text strong { color: var(--text); }
+
+    .micro-trust {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mt-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: var(--muted-light);
+    }
+
+    .disclaimer {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 10px;
+      color: var(--muted-light);
+      line-height: 1.5;
+    }
+
+    .disclaimer a {
+      color: var(--muted);
+      text-decoration: underline;
+    }
+
+    /* Push Overlay */
+    #push-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    #push-overlay.visible { opacity: 1; }
+
+    .push-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 28px 24px 24px;
+      width: 90%;
+      max-width: 340px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      transform: translateY(20px) scale(0.96);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    #push-overlay.visible .push-card {
+      transform: translateY(0) scale(1);
+    }
+
+    .push-icon {
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--teal) 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .push-icon svg { width: 28px; height: 28px; fill: white; }
+
+    .push-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .push-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .push-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      margin-bottom: 10px;
+      transition: all 0.15s;
+    }
+
+    .push-btn-primary {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--teal) 100%);
+      color: white;
+      box-shadow: 0 4px 16px var(--blue-glow);
+    }
+
+    .push-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,0.5); }
+
+    .push-btn-secondary {
+      background: var(--surface);
+      color: var(--muted);
+      border: 2px solid var(--border);
+    }
+
+    .push-btn-secondary:hover { background: var(--border); }
+
+    /* Social Bar */
+    #adsterra-social-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 998;
+      text-align: center;
+      margin-bottom: 0 !important;
+      min-height: 0;
+      transition: transform 0.3s ease;
+    }
+
+    #adsterra-social-bar.hidden {
+      transform: translateY(-100%);
+    }
+
+    /* System toast */
+    #sys-toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #10b981;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 10002;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+  </style>
+<base target="_blank">
+</head>
+<body>
+<div id="adsterra-social-bar"></div>
+<!-- Adsterra Social Bar -->
+<script data-cfasync="false" src="https://dyingefforlessefforlessours.com/9d/98/cc/9d98cc51460a555068d0d0f908b52a95.js" async></script>
+
+
+<div class="page-wrap">
+  <nav class="topbar">
+    <div class="logo">
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <span class="logo-text">FLIX<span>BRIDGE</span></span>
+    </div>
+    <div class="ssl-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px;">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg> SSL
+    </div>
+  </nav>
+
+  <div class="scarcity-bar">
+    <div class="scarcity-dot"></div>
+    <span>Your free trial slot expires in <strong id="countdown">4:59</strong></span>
+  </div>
+
+  <div class="library-scan" id="libraryScan">
+    <div class="scan-text">🔍 Scanning library...</div>
+    <div class="scan-progress"><div class="scan-progress-bar"></div></div>
+  </div>
+
+  <div class="main-card">
+    <div class="card-header">
+      <div class="header-eyebrow">Free Streaming Access</div>
+      <h1 class="header-title" id="headline">Watch Movies Free</h1>
+      <p class="header-sub">Start free trials to top streaming services.</p>
+    </div>
+
+    <div class="progress-section">
+      <div class="steps-row">
+        <div class="step done">
+          <div class="step-circle">✓</div>
+          <div class="step-label">Region<br>Verified</div>
+        </div>
+        <div class="step active" id="step2-indicator">
+          <div class="step-circle">2</div>
+          <div class="step-label">Pick<br>Category</div>
+        </div>
+        <div class="step pending" id="step3-indicator">
+          <div class="step-circle">3</div>
+          <div class="step-label">Start<br>Trial</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-row">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div class="info-content">
+          <div class="info-label">Location</div>
+          <div class="info-value" id="region-val">Detecting city, country...</div>
+        </div>
+        <div class="info-status status-ok">OK</div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <div class="info-content">
+          <div class="info-label">Device</div>
+          <div class="info-value" id="device-val">Checking...</div>
+        </div>
+        <div class="info-status status-ok">Secure</div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="guide-text" id="step1">Choose movie category</div>
+      <div class="category-grid">
+        <button class="cat-btn" data-cat="Action"><span class="emoji">🎬</span>Action</button>
+        <button class="cat-btn" data-cat="Horror"><span class="emoji">👻</span>Horror</button>
+        <button class="cat-btn" data-cat="Comedy"><span class="emoji">😂</span>Comedy</button>
+        <button class="cat-btn" data-cat="Thriller"><span class="emoji">🔪</span>Thriller</button>
+        <button class="cat-btn" data-cat="Romance"><span class="emoji">💕</span>Romance</button>
+        <button class="cat-btn" data-cat="Sci-Fi"><span class="emoji">🚀</span>Sci-Fi</button>
+      </div>
+      <div class="guide-text step-2" id="step2-text" style="display:none;">Claim your free trial</div>
+      <div class="proof-card">
+        <div class="proof-faces">
+          <div class="face f1">A</div>
+          <div class="face f2">K</div>
+          <div class="face f3">T</div>
+        </div>
+        <div class="proof-text"><strong id="proof-num">1,204</strong> people claimed today</div>
+      </div>
+      <button type="button" class="cta-btn" id="main-cta" disabled>
+        <span>👆</span> Select a category above
+      </button>
+      <div class="micro-trust">
+        <div class="mt-item">✓ No credit card</div>
+        <div class="mt-item">✓ Cancel anytime</div>
+        <div class="mt-item">🔒 256-bit</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="disclaimer">
+    By continuing you agree to our <a href="/terms.html" target="_blank">Terms of Use</a>
+    and <a href="/privacy.html" target="_blank">Privacy Policy</a>.<br>
+    Free trials are offered by third-party streaming services.
+  </p>
+</div>
+
+<!-- Push Notification Overlay -->
+<div id="push-overlay">
+  <div class="push-card">
+    <div class="push-icon">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </div>
+    <div class="push-title">Get Alerted First</div>
+    <div class="push-desc">Enable alerts to be notified the moment new free trial slots open for <strong id="push-cat">your category</strong>.</div>
+    <button type="button" class="push-btn push-btn-primary" id="banner-subscribe">🔔 Get Alerts & Continue</button>
+    <button type="button" class="push-btn push-btn-secondary" id="banner-later">Not Now — Continue</button>
+  </div>
+</div>
+
+<!-- System toast -->
+<div id="sys-toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── CONFIGURATION ──────────────────────────────────────────────────────────
+  const ONESIGNAL_APP_ID = 'a6b51351-68e7-4ba0-99da-ac0690420396'; // ← replace with your real OneSignal App ID
+  const OFFER_URL = 'https://your-offer-url.com'; // ← replace with your offer URL
+
+  // ── STATE ──────────────────────────────────────────────────────────────────
+  let isSubscribed = false;
+  let overlayShown = false;
+  let ctaClicked = false;
+  let overlayTimer = null;
+  let cdInterval = null;
+  let selectedCategory = null;
+  let categorySelected = false;
+
+  // ── DOM REFS ───────────────────────────────────────────────────────────────
+  const sysToast = document.getElementById('sys-toast');
+  const ctaBtn = document.getElementById('main-cta');
+  const overlay = document.getElementById('push-overlay');
+  const regionVal = document.getElementById('region-val');
+  const deviceVal = document.getElementById('device-val');
+
+  // ── DETECTION ──────────────────────────────────────────────────────────────
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const deviceType = /Mobile|Android|iPhone/.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
+  let userCity = 'Unknown';
+  let countryCode = 'US';
+  let sourceId = new URLSearchParams(location.search).get('source') || 'organic';
+
+  // Populate device info immediately
+  deviceVal.textContent = deviceType;
+
+  // Try geo detection (best effort)
+  fetch('https://ipapi.co/json/')
+    .then(r => r.json())
+    .then(data => {
+      userCity = data.city || 'Unknown';
+      countryCode = data.country_code || 'US';
+      regionVal.textContent = `${userCity}, ${data.country_name || countryCode}`;
+    })
+    .catch(() => {
+      regionVal.textContent = 'United States';
+    });
+
+  // ── COUNTDOWN ────────────────────────────────────────────────────────────────
+  let timeLeft = 299; // 4:59
+  cdInterval = setInterval(() => {
+    timeLeft--;
+    const m = Math.floor(timeLeft / 60);
+    const s = timeLeft % 60;
+    const el = document.getElementById('countdown');
+    if (el) el.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+    if (timeLeft <= 0) clearInterval(cdInterval);
+  }, 1000);
+
+  // ── CATEGORY SELECTION ─────────────────────────────────────────────────────
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (ctaClicked) return;
+      selectedCategory = btn.dataset.cat;
+      categorySelected = true;
+
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      ctaBtn.disabled = false;
+      ctaBtn.classList.add('ready');
+      ctaBtn.innerHTML = '<span>🚀</span> Start Free Trial';
+
+      document.getElementById('step2-indicator').classList.add('done');
+      document.getElementById('step2-indicator').classList.remove('active');
+      document.getElementById('step3-indicator').classList.add('active');
+      document.getElementById('step3-indicator').classList.remove('pending');
+
+      document.getElementById('step1').style.display = 'none';
+      document.getElementById('step2-text').style.display = 'flex';
+
+      // Update headline
+      document.getElementById('headline').textContent = `${selectedCategory} Movies Free`;
+    });
+  });
+
+  // ── HILLTOP POPUNDER + REDIRECT ────────────────────────────────────────────
+  function triggerHilltopMonetization() {
+    console.log('[Hilltop] Triggering monetization...');
+    try {
+      const clickEvent = new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+        clientX: 0,
+        clientY: 0
+      });
+      document.body.dispatchEvent(clickEvent);
+      console.log('[Hilltop] Click event dispatched');
+      return true;
+    } catch (e) {
+      console.warn('[Hilltop] Trigger failed:', e.message);
+      return false;
+    }
+  }
+
+  async function executeMonetizationFlow() {
+    console.log('[Flow] Executing | Offer:', OFFER_URL);
+    triggerHilltopMonetization();
+    setTimeout(() => { location.href = OFFER_URL; }, 300);
+    setTimeout(() => {
+      if (window.location.href !== OFFER_URL) {
+        window.location.replace(OFFER_URL);
+      }
+    }, 2000);
+  }
+
+  function getOfferUrl() {
+    return OFFER_URL;
+  }
+
+  function hideSocialBar() {
+    const bar = document.getElementById('adsterra-social-bar');
+    if (bar) bar.classList.add('hidden');
+  }
+
+  // ── SYSTEM TOAST ───────────────────────────────────────────────────────────
+  function showSysToast(msg, dur) {
+    dur = dur || 3000;
+    sysToast.textContent = msg;
+    sysToast.style.opacity = '1';
+    setTimeout(() => { sysToast.style.opacity = '0'; }, dur);
+  }
+
+  // ── ONESIGNAL – SILENT INIT, ZERO AUTO-PROMPTS ────────────────────────────
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function (OneSignal) {
+    if (!ONESIGNAL_APP_ID || ONESIGNAL_APP_ID === 'ONE-SIGNAL-APP-ID') {
+      console.warn('[OneSignal] App ID not configured'); return;
+    }
+    if (location.protocol !== 'https:') {
+      console.warn('[OneSignal] Requires HTTPS'); return;
+    }
+    try {
+      await OneSignal.init({
+        appId: ONESIGNAL_APP_ID,
+        notifyButton: { enable: false },
+        autoResubscribe: false,
+        promptOptions: {
+          slidedown: { enabled: false },
+          native: { enabled: false },
+          customlink: { enabled: false }
+        }
+      });
+
+      if (OneSignal.Slidedown && typeof OneSignal.Slidedown.disable === 'function') {
+        OneSignal.Slidedown.disable();
+      }
+
+      isSubscribed = !!(await OneSignal.User.PushSubscription.optedIn);
+      console.log('[OneSignal] Ready | subscribed:', isSubscribed);
+
+    } catch (e) {
+      console.error('[OneSignal] Init error:', e.message);
+    }
+  });
+
+  // ── ONESIGNAL OPT-IN ─────────────────────────────────────────────────────
+  async function requestPushOptIn() {
+    if (isSubscribed || !window.OneSignal) {
+      console.log('[OneSignal] Skipping optIn');
+      return;
+    }
+
+    console.log('[OneSignal] Firing optIn() - non-blocking');
+
+    try {
+      window.OneSignal.User.PushSubscription.optIn();
+
+      const checkSubscribed = () => {
+        if (window.OneSignal.User.PushSubscription.optedIn) {
+          isSubscribed = true;
+          console.log('[OneSignal] User subscribed');
+        }
+      };
+
+      setTimeout(checkSubscribed, 100);
+      setTimeout(checkSubscribed, 2000);
+
+      const changeHandler = (event) => {
+        if (event.current && event.current.optedIn) {
+          isSubscribed = true;
+          console.log('[OneSignal] Subscription change: subscribed');
+          window.OneSignal.User.PushSubscription.removeEventListener('change', changeHandler);
+        }
+      };
+      window.OneSignal.User.PushSubscription.addEventListener('change', changeHandler);
+
+      setTimeout(async () => {
+        try {
+          await window.OneSignal.User.addTags({
+            geo: `${userCity},${countryCode}`,
+            category: selectedCategory || 'none',
+            device: deviceType,
+            source: sourceId || 'organic'
+          });
+          console.log('[OneSignal] Tags added');
+        } catch (tagErr) {
+          console.warn('[OneSignal] Tagging failed:', tagErr.message);
+        }
+      }, 500);
+
+    } catch (e) {
+      console.warn('[OneSignal] optIn error:', e.message);
+    }
+  }
+
+  // ── OVERLAY HELPERS ──────────────────────────────────────────────────────
+  function showPushOverlay() {
+    if (overlayShown || ctaClicked) {
+      console.log('[Overlay] Skipped');
+      return false;
+    }
+    overlayShown = true;
+    if (overlayTimer) { clearTimeout(overlayTimer); overlayTimer = null; }
+
+    document.getElementById('push-cat').textContent = selectedCategory || 'your category';
+    overlay.style.display = 'flex';
+    requestAnimationFrame(() => requestAnimationFrame(() => overlay.classList.add('visible')));
+    console.log('[Overlay] Shown');
+    return true;
+  }
+
+  function hidePushOverlay() {
+    overlay.classList.remove('visible');
+    setTimeout(() => { overlay.style.display = 'none'; }, 400);
+    console.log('[Overlay] Hidden');
+  }
+
+  // ── BANNER BUTTONS (8s FALLBACK OVERLAY) ───────────────────────────────────
+  document.getElementById('banner-later').addEventListener('click', async function () {
+    console.log('[Banner] Not Now');
+    hidePushOverlay();
+    await executeMonetizationFlow();
+  });
+
+  document.getElementById('banner-subscribe').addEventListener('click', async function () {
+    console.log('[Banner] Get Alerts');
+    hidePushOverlay();
+    await executeMonetizationFlow();
+    requestPushOptIn();
+  });
+
+  // ── CTA CLICK (ENGAGED MODE) ──────────────────────────────────────────────
+  ctaBtn.addEventListener('click', async function () {
+    if (!categorySelected || ctaClicked) {
+      console.log('[CTA] Blocked | categorySelected:', categorySelected, '| ctaClicked:', ctaClicked);
+      return;
+    }
+
+    ctaClicked = true;
+    clearInterval(cdInterval);
+    console.log('[CTA] Clicked | cat:', selectedCategory);
+
+    ctaBtn.innerHTML = '<span>⏳</span> Processing...';
+    ctaBtn.style.opacity = '0.8';
+    ctaBtn.disabled = true;
+
+    hideSocialBar();
+
+    if (isIOS) {
+      console.log('[CTA → iOS] Direct flow');
+      await executeMonetizationFlow();
+      return;
+    }
+
+    if (!isSubscribed) {
+      console.log('[CTA] OneSignal opt-in (non-blocking)');
+      requestPushOptIn();
+    }
+
+    await executeMonetizationFlow();
+  });
+
+  // ── NON-ENGAGED OVERLAY TIMER (8s) ────────────────────────────────────────
+  overlayTimer = setTimeout(() => {
+    if (!categorySelected && !overlayShown && !ctaClicked) {
+      console.log('[Timer] 8s elapsed, showing overlay');
+      showPushOverlay();
+    }
+  }, 8000);
+
+  // ── PAGE UNLOAD CLEANUP ────────────────────────────────────────────────────
+  window.addEventListener('beforeunload', () => {
+    if (overlayTimer) clearTimeout(overlayTimer);
+    clearInterval(cdInterval);
+  });
+
+  // ── LIVE PROOF COUNTER ────────────────────────────────────────────────────
+  setInterval(() => {
+    const el = document.getElementById('proof-num');
+    if (!el) return;
+    let num = parseInt(el.textContent.replace(/,/g, ''));
+    num += Math.floor(Math.random() * 3) + 1;
+    el.textContent = num.toLocaleString();
+  }, 8000);
+
+  console.log('[Init] FlixBridge v14 | Fixed | OneSignal non-blocking');
+})();
+</script>
+
+<script>
+// HilltopAds Standard Popunder Script
+(function(lzbp){
+var d = document,
+    s = d.createElement('script'),
+    l = d.scripts[d.scripts.length - 1];
+s.settings = lzbp || {};
+s.src = "\/\/slimgather.com\/cAD.9F6HbI2x5klgSyWUQO9SN\/zSAEyrNJTgkEzEM_yD0f3-MLDyIu1AODTIMC3T";
+s.async = true;
+s.referrerPolicy = 'no-referrer-when-downgrade';
+l.parentNode.insertBefore(s, l);
+})({})
+</script>
+
+</body>
+</html>

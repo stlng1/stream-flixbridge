@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- flixbridge_v21.html -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>FlixBridge — Free Streaming Trials</title>
+  <meta name="3a5bbb69070039bf39de64a8cffb69c532c50269" content="3a5bbb69070039bf39de64a8cffb69c532c50269" />
+  <meta name="referrer" content="no-referrer-when-downgrade" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- OneSignal SDK — network standard, do not alter -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+  <style>
+    :root {
+      --bg:#f4f6fb; --white:#fff; --surface:#eef1f8; --border:#dde2ef;
+      --blue:#2563eb; --blue-light:#3b7eff; --blue-dim:rgba(37,99,235,0.08);
+      --blue-glow:rgba(37,99,235,0.25); --teal:#0ea5b0; --green:#16a34a;
+      --green-dim:rgba(22,163,74,0.08); --amber:#d97706;
+      --amber-dim:rgba(217,119,6,0.08); --text:#0f1523; --text-2:#374151;
+      --muted:#6b7280; --muted-light:#9ca3af;
+      --font:'Plus Jakarta Sans',sans-serif; --radius:12px;
+      --shadow-lg:0 12px 40px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.05);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%;background:var(--bg);color:var(--text);
+      font-family:var(--font);-webkit-font-smoothing:antialiased;
+      display:flex;flex-direction:column;align-items:center;
+      justify-content:center;padding:12px}
+    .page-wrap{width:100%;max-width:400px;position:relative;z-index:1}
+
+    /* ── Card ── */
+    .card{background:var(--white);border-radius:20px;
+      box-shadow:var(--shadow-lg);overflow:hidden;position:relative}
+
+    /* ── Header bar ── */
+    .card-header{background:linear-gradient(135deg,#1a1f36 0%,#2563eb 100%);
+      padding:18px 20px 16px;display:flex;align-items:center;
+      justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:8px}
+    .brand-logo{width:32px;height:32px;border-radius:8px;
+      background:rgba(255,255,255,0.15);display:flex;align-items:center;
+      justify-content:center;font-size:16px}
+    .brand-name{color:#fff;font-weight:700;font-size:15px;letter-spacing:-0.3px}
+    .brand-name span{color:#93c5fd}
+    .ssl-badge{display:flex;align-items:center;gap:5px;
+      background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
+      border-radius:20px;padding:4px 10px;color:#fff;font-size:11px;font-weight:600}
+
+    /* ── Countdown ── */
+    .countdown-wrap{background:var(--amber-dim);border-bottom:1px solid #fde68a;
+      padding:10px 20px;display:flex;align-items:center;justify-content:center;
+      gap:8px;font-size:13px;color:var(--amber);font-weight:600}
+    #countdown-timer{font-weight:700;font-size:14px;color:#b45309;
+      background:#fef3c7;border-radius:6px;padding:2px 8px;
+      min-width:42px;text-align:center}
+    .countdown-wrap.hidden{display:none}
+
+    /* ── Status bar ── */
+    .status-bar{background:var(--blue-dim);border-bottom:1px solid var(--border);
+      padding:10px 20px;display:flex;align-items:center;gap:8px;
+      font-size:12px;color:var(--blue);font-weight:600}
+    .pulse{width:8px;height:8px;border-radius:50%;background:#22c55e;
+      box-shadow:0 0 0 0 rgba(34,197,94,0.4);
+      animation:pulse 2s infinite}
+    @keyframes pulse{
+      0%{box-shadow:0 0 0 0 rgba(34,197,94,0.4)}
+      70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}
+      100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+
+    /* ── Steps ── */
+    .steps{display:flex;align-items:center;justify-content:center;
+      gap:0;padding:16px 20px 0;background:var(--white)}
+    .step{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+    .step-dot{width:28px;height:28px;border-radius:50%;display:flex;
+      align-items:center;justify-content:center;font-size:12px;font-weight:700;
+      background:var(--surface);color:var(--muted);border:2px solid var(--border);
+      transition:all .3s}
+    .step-label{font-size:10px;color:var(--muted);font-weight:500;
+      text-align:center;line-height:1.3}
+    .step.active .step-dot{background:var(--blue);color:#fff;border-color:var(--blue)}
+    .step.active .step-label{color:var(--blue);font-weight:700}
+    .step.done .step-dot{background:var(--green);color:#fff;border-color:var(--green)}
+    .step-line{flex:1;height:2px;background:var(--border);margin-bottom:16px;
+      max-width:40px;transition:background .3s}
+    .step-line.done{background:var(--green)}
+
+    /* ── Body ── */
+    .card-body{padding:20px}
+
+    /* ── Hero ── */
+    .hero{text-align:center;margin-bottom:20px}
+    .hero h1{font-size:22px;font-weight:700;letter-spacing:-0.5px;
+      color:var(--text);line-height:1.25;margin-bottom:6px}
+    .hero h1 span{color:var(--blue)}
+    .hero p{font-size:13px;color:var(--muted);line-height:1.5}
+
+    /* ── Info chips ── */
+    .info-chips{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+    .chip{flex:1;min-width:0;display:flex;align-items:center;gap:6px;
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:10px;padding:10px 12px;font-size:11px;font-weight:600;
+      color:var(--text-2);position:relative;overflow:hidden}
+    .chip-icon{font-size:15px;flex-shrink:0}
+    .chip-body{display:flex;flex-direction:column;gap:1px;min-width:0}
+    .chip-label{color:var(--muted-light);font-size:10px;font-weight:500}
+    .chip-value{font-size:12px;font-weight:700;color:var(--text);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .chip-badge{position:absolute;top:6px;right:8px;font-size:9px;
+      font-weight:700;border-radius:4px;padding:1px 5px}
+    .badge-green{background:var(--green-dim);color:var(--green)}
+    .badge-blue{background:var(--blue-dim);color:var(--blue)}
+
+    /* ── Category grid ── */
+    .section-label{font-size:12px;font-weight:700;color:var(--muted);
+      text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+    .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+    .cat-btn{background:var(--surface);border:2px solid var(--border);
+      border-radius:var(--radius);padding:12px 6px;display:flex;
+      flex-direction:column;align-items:center;gap:5px;cursor:pointer;
+      font-family:var(--font);font-size:11px;font-weight:600;color:var(--text-2);
+      transition:all .2s;-webkit-tap-highlight-color:transparent;
+      user-select:none}
+    .cat-btn:hover{border-color:var(--blue-light);background:var(--blue-dim);
+      color:var(--blue)}
+    .cat-btn.selected{border-color:var(--blue);background:var(--blue-dim);
+      color:var(--blue);box-shadow:0 0 0 3px var(--blue-glow)}
+    .cat-btn .emoji{font-size:22px;line-height:1}
+
+    /* ── CTA ── */
+    .cta-wrap{margin-bottom:16px}
+    .cta-btn{width:100%;padding:16px;border:none;border-radius:var(--radius);
+      background:linear-gradient(135deg,var(--blue) 0%,var(--blue-light) 100%);
+      color:#fff;font-family:var(--font);font-size:16px;font-weight:700;
+      cursor:pointer;transition:all .25s;display:flex;align-items:center;
+      justify-content:center;gap:10px;letter-spacing:-0.3px;
+      box-shadow:0 4px 16px var(--blue-glow);position:relative;overflow:hidden}
+    .cta-btn:disabled{background:linear-gradient(135deg,#94a3b8,#cbd5e1);
+      box-shadow:none;cursor:not-allowed;transform:none}
+    .cta-btn:not(:disabled):hover{transform:translateY(-1px);
+      box-shadow:0 6px 24px var(--blue-glow)}
+    .cta-btn:not(:disabled):active{transform:translateY(0)}
+    .cta-hint{text-align:center;font-size:11px;color:var(--muted);
+      margin-top:8px;transition:all .3s}
+    .cta-hint.selected{color:var(--green);font-weight:600}
+
+    /* ── Social proof ── */
+    .social-proof{display:flex;align-items:center;justify-content:center;
+      gap:8px;background:var(--green-dim);border:1px solid #bbf7d0;
+      border-radius:10px;padding:10px 14px;margin-bottom:16px;
+      font-size:12px;color:var(--green);font-weight:600}
+
+    /* ── Trust badges ── */
+    .trust-row{display:flex;justify-content:center;gap:16px;
+      margin-bottom:14px;flex-wrap:wrap}
+    .trust-item{display:flex;align-items:center;gap:5px;
+      font-size:11px;color:var(--muted);font-weight:500}
+
+    /* ── Legal ── */
+    .legal{font-size:10px;color:var(--muted-light);text-align:center;
+      line-height:1.6;padding:0 8px}
+    .legal a{color:var(--muted);text-decoration:underline}
+
+    /* ════════════════════════════════════
+       OVERLAY
+    ════════════════════════════════════ */
+    #push-overlay{position:fixed;inset:0;z-index:9999;
+      display:none;align-items:center;justify-content:center;
+      padding:20px}
+    #push-overlay.show{display:flex}
+    .overlay-bg{position:absolute;inset:0;
+      background:rgba(10,15,35,0.75);backdrop-filter:blur(6px)}
+    .overlay-card{position:relative;z-index:1;background:var(--white);
+      border-radius:24px;padding:32px 28px 28px;max-width:360px;width:100%;
+      box-shadow:0 24px 64px rgba(0,0,0,0.25);text-align:center;
+      animation:overlayIn .35s cubic-bezier(.34,1.56,.64,1)}
+    @keyframes overlayIn{
+      from{opacity:0;transform:scale(.9) translateY(20px)}
+      to{opacity:1;transform:scale(1) translateY(0)}}
+    .overlay-icon{width:64px;height:64px;border-radius:50%;
+      background:var(--blue-dim);border:2px solid rgba(37,99,235,0.2);
+      display:flex;align-items:center;justify-content:center;
+      font-size:28px;margin:0 auto 16px}
+    .overlay-title{font-size:20px;font-weight:700;color:var(--text);
+      margin-bottom:8px;letter-spacing:-0.4px;line-height:1.2}
+    .overlay-sub{font-size:13px;color:var(--muted);line-height:1.5;
+      margin-bottom:24px}
+    .overlay-sub strong{color:var(--blue)}
+    .overlay-alerts-btn{width:100%;padding:14px;border:none;
+      border-radius:var(--radius);
+      background:linear-gradient(135deg,var(--blue),var(--blue-light));
+      color:#fff;font-family:var(--font);font-size:15px;font-weight:700;
+      cursor:pointer;display:flex;align-items:center;justify-content:center;
+      gap:8px;margin-bottom:12px;transition:all .2s;
+      box-shadow:0 4px 16px var(--blue-glow)}
+    .overlay-alerts-btn:hover{transform:translateY(-1px)}
+    .overlay-skip-btn{background:none;border:none;font-family:var(--font);
+      font-size:13px;color:var(--muted);cursor:pointer;padding:8px;
+      text-decoration:underline;transition:color .2s;width:100%}
+    .overlay-skip-btn:hover{color:var(--text)}
+    .overlay-note{font-size:10px;color:var(--muted-light);margin-top:12px;
+      line-height:1.5}
+
+    /* ── Social bar container ── */
+    #social-bar-wrap{position:fixed;bottom:0;left:0;right:0;z-index:100;
+      transition:opacity .3s,transform .3s}
+    #social-bar-wrap.hidden{opacity:0;pointer-events:none;
+      transform:translateY(100%)}
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+  <div class="card">
+
+    <!-- Header -->
+    <div class="card-header">
+      <div class="brand">
+        <div class="brand-logo">🎬</div>
+        <div class="brand-name">Flix<span>Bridge</span></div>
+      </div>
+      <div class="ssl-badge">🔒 SSL</div>
+    </div>
+
+    <!-- Countdown (cosmetic urgency — disappears on engagement) -->
+    <div class="countdown-wrap" id="countdown-wrap">
+      <span>⏳</span>
+      <span>Your free trial slot expires in</span>
+      <span id="countdown-timer">4:59</span>
+    </div>
+
+    <!-- Status -->
+    <div class="status-bar">
+      <div class="pulse"></div>
+      <span id="status-text">🔍 Scanning library...</span>
+    </div>
+
+    <!-- Steps -->
+    <div class="steps">
+      <div class="step done" id="step1">
+        <div class="step-dot">✓</div>
+        <div class="step-label">Region<br>Verified</div>
+      </div>
+      <div class="step-line" id="line1"></div>
+      <div class="step active" id="step2">
+        <div class="step-dot">2</div>
+        <div class="step-label">Pick<br>Category</div>
+      </div>
+      <div class="step-line" id="line2"></div>
+      <div class="step" id="step3">
+        <div class="step-dot">3</div>
+        <div class="step-label">Start<br>Trial</div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body">
+
+      <!-- Hero -->
+      <div class="hero">
+        <h1>Watch Movies <span>Free</span></h1>
+        <p>Start free trials to top streaming services.</p>
+      </div>
+
+      <!-- Info chips -->
+      <div class="info-chips">
+        <div class="chip">
+          <div class="chip-icon">📍</div>
+          <div class="chip-body">
+            <div class="chip-label">Location</div>
+            <div class="chip-value" id="geo-display">Detecting...</div>
+          </div>
+          <span class="chip-badge badge-green" id="geo-badge">OK</span>
+        </div>
+        <div class="chip">
+          <div class="chip-icon">📱</div>
+          <div class="chip-body">
+            <div class="chip-label">Device</div>
+            <div class="chip-value" id="device-display">Checking...</div>
+          </div>
+          <span class="chip-badge badge-blue">Secure</span>
+        </div>
+      </div>
+
+      <!-- Category -->
+      <div class="section-label">Choose movie category</div>
+      <div class="cat-grid">
+        <button class="cat-btn" data-cat="action">
+          <span class="emoji">🎬</span>Action
+        </button>
+        <button class="cat-btn" data-cat="horror">
+          <span class="emoji">👻</span>Horror
+        </button>
+        <button class="cat-btn" data-cat="comedy">
+          <span class="emoji">😂</span>Comedy
+        </button>
+        <button class="cat-btn" data-cat="thriller">
+          <span class="emoji">🔪</span>Thriller
+        </button>
+        <button class="cat-btn" data-cat="romance">
+          <span class="emoji">💕</span>Romance
+        </button>
+        <button class="cat-btn" data-cat="scifi">
+          <span class="emoji">🚀</span>Sci-Fi
+        </button>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-wrap">
+        <button class="cta-btn" id="cta-btn" disabled>
+          <span id="cta-icon">🎬</span>
+          <span id="cta-text">Claim your free trial</span>
+          <span id="cta-arrow">→</span>
+        </button>
+        <div class="cta-hint" id="cta-hint">
+          <span id="avatar-a">A</span>
+          <span id="avatar-k">K</span>
+          &nbsp;👆 Select a category above
+        </div>
+      </div>
+
+      <!-- Social proof -->
+      <div class="social-proof">
+        🔥 <strong id="claimed-count">1,204</strong>&nbsp;people claimed today
+      </div>
+
+      <!-- Trust -->
+      <div class="trust-row">
+        <div class="trust-item">✓ No credit card</div>
+        <div class="trust-item">✓ Cancel anytime</div>
+        <div class="trust-item">🔒 256-bit</div>
+      </div>
+
+      <!-- Legal -->
+      <p class="legal">
+        By continuing you agree to our
+        <a href="/terms.html">Terms of Use</a> and
+        <a href="/privacy.html">Privacy Policy</a>.<br>
+        Free trials are offered by third-party streaming services.
+      </p>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── Push Overlay ── -->
+<div id="push-overlay">
+  <div class="overlay-bg"></div>
+  <div class="overlay-card">
+    <div class="overlay-icon">🔔</div>
+    <div class="overlay-title">Get Alerted First</div>
+    <div class="overlay-sub">
+      Enable alerts to be notified the moment new free trial slots open
+      for <strong id="overlay-cat-name">your category</strong>.
+    </div>
+    <button class="overlay-alerts-btn" id="overlay-alerts-btn">
+      🔔 Get Alerts &amp; Continue
+    </button>
+    <button class="overlay-skip-btn" id="overlay-skip-btn">
+      Not Now — Continue
+    </button>
+    <div class="overlay-note">
+      You can unsubscribe anytime. We only send relevant alerts.
+    </div>
+  </div>
+</div>
+
+<!-- ── Social Bar (network standard — do not alter the tag itself) ── -->
+<div id="social-bar-wrap">
+  <!-- Adsterra Social Bar tag injected here by network -->
+  <script async="async"
+    data-cfasync="false"
+    src="//pl26625481.profitablegatecpm.com/1ca2fc7419d0d2cb60e2a44d91e7d94f/invoke.js">
+  </script>
+  <div id="container-1ca2fc7419d0d2cb60e2a44d91e7d94f"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     HILLTOP ANTI-BLOCK TAG  — network standard
+     Do NOT alter. Bind behaviour controlled by our
+     click handlers below, NOT by autopop.
+══════════════════════════════════════════════════ -->
+<script>
+(function(d,s,id){
+  var js,fjs=d.getElementsByTagName(s)[0];
+  if(d.getElementById(id))return;
+  js=d.createElement(s);js.id=id;js.async=true;
+  js.src='https://cdn.hilltopads.com/pub/hilltopads.min.js';
+  fjs.parentNode.insertBefore(js,fjs);
+}(document,'script','hilltop-sdk'));
+</script>
+
+<!-- ══════════════════════════════════════════════════
+     OUR APPLICATION LOGIC — v21
+     All custom behaviour lives here.
+══════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  console.log('[FlixBridge v21] init');
+
+  /* ─────────────────────────────────────────
+     CONFIG — edit only these values
+  ───────────────────────────────────────── */
+  const CFG = {
+    ONESIGNAL_APP_ID   : 'a6b51351-68e7-4ba0-99da-ac0690420396',
+    // Direct offer URL for Tier-1 countries.
+    // Leave empty string '' to always use smartlink.
+    DIRECT_OFFER_URL   : '',
+    // Smartlink — guaranteed fallback, always set this
+    SMARTLINK_URL      : 'https://dyingefforlessefforlessours.com/click',
+    // Countries that qualify for direct offer
+    TIER1              : ['US','CA','GB','AU','NZ','DE','FR','SE','NO','DK','FI','IE','NL','AT','CH','BE'],
+    // Countdown display start (seconds)
+    COUNTDOWN_START    : 299,
+    // Delay (ms) before redirect so Hilltop popunder can open
+    HILLTOP_DELAY      : 400,
+    // Geo API timeout (ms)
+    GEO_TIMEOUT        : 4000,
+    // 8-second fallback overlay delay (ms)
+    OVERLAY_DELAY      : 8000,
+  };
+
+  /* ─────────────────────────────────────────
+     SANITIZE URL PARAMS — prevent open redirect / XSS
+  ───────────────────────────────────────── */
+  function sanitize(val, maxLen) {
+    maxLen = maxLen || 80;
+    return String(val || '')
+      .replace(/[^a-zA-Z0-9\s\-_,.@+]/g, '')
+      .substring(0, maxLen)
+      .trim();
+  }
+
+  /* ─────────────────────────────────────────
+     URL PARAMS (sanitized)
+  ───────────────────────────────────────── */
+  var _p         = new URLSearchParams(window.location.search);
+  var clickId    = sanitize(_p.get('click_id')  || _p.get('clickid'), 64);
+  var sourceId   = sanitize(_p.get('source_id') || _p.get('source'),  32);
+  var urlCountry = sanitize(_p.get('country'), 4).toUpperCase();
+  var urlCity    = sanitize(_p.get('city'), 32);
+  var urlCat     = sanitize(_p.get('cat'), 20).toLowerCase();
+
+  /* ─────────────────────────────────────────
+     STATE
+  ───────────────────────────────────────── */
+  var countryCode      = urlCountry || '';
+  var userCity         = urlCity    || '';
+  var deviceType       = '';
+  var selectedCategory = '';
+  var isTier1          = false;
+  var isIOS            = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  var isMobile         = /Mobi|Android/i.test(navigator.userAgent);
+  var isSubscribed     = false;
+  var ctaClicked       = false;
+  var overlayShown     = false;
+  var overlayTimer     = null;
+  var cdInterval       = null;
+  var cdSeconds        = CFG.COUNTDOWN_START;
+  var isAlreadyEngaged = sessionStorage.getItem('flixbridge_engaged') === 'true';
+
+  /* ─────────────────────────────────────────
+     DOM REFS
+  ───────────────────────────────────────── */
+  var ctaBtn           = document.getElementById('cta-btn');
+  var ctaText          = document.getElementById('cta-text');
+  var ctaIcon          = document.getElementById('cta-icon');
+  var ctaHint          = document.getElementById('cta-hint');
+  var geoDisplay       = document.getElementById('geo-display');
+  var geoBadge         = document.getElementById('geo-badge');
+  var deviceDisplay    = document.getElementById('device-display');
+  var statusText       = document.getElementById('status-text');
+  var step2            = document.getElementById('step2');
+  var step3            = document.getElementById('step3');
+  var line1            = document.getElementById('line1');
+  var line2            = document.getElementById('line2');
+  var countdownWrap    = document.getElementById('countdown-wrap');
+  var countdownEl      = document.getElementById('countdown-timer');
+  var pushOverlay      = document.getElementById('push-overlay');
+  var overlayCatName   = document.getElementById('overlay-cat-name');
+  var overlayAlertsBtn = document.getElementById('overlay-alerts-btn');
+  var overlaySkipBtn   = document.getElementById('overlay-skip-btn');
+  var socialBarWrap    = document.getElementById('social-bar-wrap');
+  var catBtns          = document.querySelectorAll('.cat-btn');
+  var claimedCount     = document.getElementById('claimed-count');
+
+  /* ─────────────────────────────────────────
+     SINGLE SOURCE OF TRUTH — getOfferUrl()
+     Priority: direct offer (Tier-1) → smartlink (fallback)
+     Category appended as token for smartlink routing.
+     Ignored by networks that don't support it.
+  ───────────────────────────────────────── */
+  function getOfferUrl() {
+    var base = '';
+
+    // Use direct offer only when configured AND user is Tier-1
+    if (CFG.DIRECT_OFFER_URL && isTier1) {
+      base = CFG.DIRECT_OFFER_URL;
+    } else {
+      base = CFG.SMARTLINK_URL;
+    }
+
+    // Guard: if base points back to this page, force smartlink
+    try {
+      var parsed = new URL(base, window.location.href);
+      if (parsed.hostname === window.location.hostname) {
+        base = CFG.SMARTLINK_URL;
+      }
+    } catch (e) {
+      base = CFG.SMARTLINK_URL;
+    }
+
+    // Append tracking + category token
+    var sep    = base.indexOf('?') >= 0 ? '&' : '?';
+    var params = [];
+    if (clickId)          params.push('clickid='  + encodeURIComponent(clickId));
+    if (sourceId)         params.push('source='   + encodeURIComponent(sourceId));
+    if (selectedCategory) params.push('cat='      + encodeURIComponent(selectedCategory));
+    if (deviceType)       params.push('device='   + encodeURIComponent(deviceType));
+    if (countryCode)      params.push('country='  + encodeURIComponent(countryCode));
+    if (userCity)         params.push('city='      + encodeURIComponent(userCity));
+
+    return params.length ? base + sep + params.join('&') : base;
+  }
+
+  /* ─────────────────────────────────────────
+     REDIRECT — guaranteed, immediate
+     Hilltop fires automatically via its own
+     click binding on document. We delay only
+     long enough for Hilltop to open the
+     popunder BEHIND, then navigate main window.
+  ───────────────────────────────────────── */
+  function doRedirect() {
+    var url = getOfferUrl();
+    markEngaged();
+    setTimeout(function () {
+      window.location.href = url;
+    }, CFG.HILLTOP_DELAY);
+  }
+
+  /* ─────────────────────────────────────────
+     MARK ENGAGED — set at every exit point
+  ───────────────────────────────────────── */
+  function markEngaged() {
+    sessionStorage.setItem('flixbridge_engaged', 'true');
+    isAlreadyEngaged = true;
+    stopCountdown();   // disappear countdown on any engagement
+    hideOverlay();
+  }
+
+  /* ─────────────────────────────────────────
+     DEVICE DETECTION
+  ───────────────────────────────────────── */
+  function detectDevice() {
+    if (isIOS)           deviceType = 'ios';
+    else if (isMobile)   deviceType = 'android';
+    else                 deviceType = 'desktop';
+    deviceDisplay.textContent = isIOS ? 'iPhone/iPad'
+                               : isMobile ? 'Android'
+                               : 'Desktop';
+  }
+
+  /* ─────────────────────────────────────────
+     GEO FETCH — with timeout + fallback
+  ───────────────────────────────────────── */
+  function fetchGeo() {
+    // If country already passed via URL param, skip fetch
+    if (countryCode) {
+      applyGeo(countryCode, userCity || countryCode);
+      return;
+    }
+    var controller = typeof AbortController !== 'undefined'
+                     ? new AbortController() : null;
+    var tid = setTimeout(function () {
+      if (controller) controller.abort();
+      applyGeo('', '');
+    }, CFG.GEO_TIMEOUT);
+
+    fetch('https://ipapi.co/json/', {
+      signal: controller ? controller.signal : undefined
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      clearTimeout(tid);
+      applyGeo(
+        sanitize(d.country_code || '', 4).toUpperCase(),
+        sanitize(d.city || d.country_name || '', 32)
+      );
+    })
+    .catch(function () {
+      clearTimeout(tid);
+      applyGeo('', '');
+    });
+  }
+
+  function applyGeo(cc, city) {
+    countryCode = cc  || urlCountry || 'XX';
+    userCity    = city || urlCity   || 'Unknown';
+    isTier1     = CFG.TIER1.indexOf(countryCode) >= 0;
+
+    geoDisplay.textContent  = userCity + ', ' + countryCode;
+    geoBadge.textContent    = isTier1 ? '✓ Tier 1' : 'OK';
+    geoBadge.className      = 'chip-badge ' + (isTier1 ? 'badge-green' : 'badge-blue');
+    statusText.textContent  = '✅ ' + (isTier1 ? 'Premium slots available' : 'Slots available');
+
+    // OneSignal tags — geo data available, fire tags now
+    onesignalTag();
+  }
+
+  /* ─────────────────────────────────────────
+     ONESIGNAL — init SILENT, no auto-prompt
+     Tags only. Prompt only via "Get Alerts" btn.
+  ───────────────────────────────────────── */
+  function initOneSignal() {
+    window.OneSignal = window.OneSignal || [];
+    OneSignal.push(function () {
+      OneSignal.init({
+        appId             : CFG.ONESIGNAL_APP_ID,
+        autoResubscribe   : false,
+        notifyButton      : { enable: false },
+        // Do NOT set autoRegister or promptOptions here
+        // Prompt is triggered only by "Get Alerts" button
+      });
+    });
+  }
+
+  function onesignalTag() {
+    // Tags fire silently — no permission needed for tags
+    if (!window.OneSignal) return;
+    OneSignal.push(function () {
+      try {
+        OneSignal.User.addTags({
+          geo      : userCity + ',' + countryCode,
+          category : selectedCategory || 'none',
+          device   : deviceType,
+          source   : sourceId || 'organic',
+          tier1    : isTier1 ? '1' : '0'
+        });
+      } catch (e) { /* silent */ }
+    });
+  }
+
+  function promptOneSignal(callback) {
+    if (!window.OneSignal) { callback && callback(false); return; }
+    OneSignal.push(function () {
+      OneSignal.showNativePrompt()
+        .then(function () {
+          OneSignal.getNotificationPermission(function (perm) {
+            isSubscribed = perm === 'granted';
+            onesignalTag();
+            callback && callback(isSubscribed);
+          });
+        })
+        .catch(function () { callback && callback(false); });
+    });
+  }
+
+  /* ─────────────────────────────────────────
+     COUNTDOWN — cosmetic urgency
+     Disappears on ANY engagement.
+     Never counts to zero (resets near end).
+  ───────────────────────────────────────── */
+  function startCountdown() {
+    if (isAlreadyEngaged) {
+      stopCountdown();
+      return;
+    }
+    cdInterval = setInterval(function () {
+      cdSeconds--;
+      if (cdSeconds <= 10) {
+        // Reset to avoid reaching zero — keeps urgency alive
+        cdSeconds = CFG.COUNTDOWN_START;
+      }
+      var m = Math.floor(cdSeconds / 60);
+      var s = cdSeconds % 60;
+      countdownEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    }, 1000);
+  }
+
+  function stopCountdown() {
+    clearInterval(cdInterval);
+    cdInterval = null;
+    countdownWrap.classList.add('hidden');
+  }
+
+  /* ─────────────────────────────────────────
+     SOCIAL PROOF — small random drift
+  ───────────────────────────────────────── */
+  function animateSocialProof() {
+    var base = 1180 + Math.floor(Math.random() * 80);
+    claimedCount.textContent = base.toLocaleString();
+    setInterval(function () {
+      base += Math.floor(Math.random() * 3);
+      claimedCount.textContent = base.toLocaleString();
+    }, 12000);
+  }
+
+  /* ─────────────────────────────────────────
+     CATEGORY SELECTION
+  ───────────────────────────────────────── */
+  function selectCategory(cat) {
+    selectedCategory = cat;
+
+    // Update button states
+    catBtns.forEach(function (b) {
+      b.classList.toggle('selected', b.dataset.cat === cat);
+    });
+
+    // Enable CTA
+    ctaBtn.disabled = false;
+    ctaText.textContent = 'Claim your free trial';
+    ctaHint.innerHTML   = '✅ Ready — tap to start your trial';
+    ctaHint.className   = 'cta-hint selected';
+
+    // Step progress
+    step2.className = 'step done';
+    step2.querySelector('.step-dot').textContent = '✓';
+    line1.classList.add('done');
+    step3.className = 'step active';
+    step3.querySelector('.step-dot').textContent = '3';
+
+    // Update overlay category name if shown
+    overlayCatName.textContent = cap(cat);
+
+    // Update OneSignal tags with selected category
+    onesignalTag();
+
+    // Cancel 8s fallback timer — user is engaged
+    if (overlayTimer) {
+      clearTimeout(overlayTimer);
+      overlayTimer = null;
+    }
+
+    // Countdown disappears on category selection (engagement)
+    stopCountdown();
+  }
+
+  function cap(s) {
+    return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+  }
+
+  /* ─────────────────────────────────────────
+     OVERLAY — 8s fallback for unengaged users
+  ───────────────────────────────────────── */
+  function showOverlay() {
+    if (overlayShown || isAlreadyEngaged || ctaClicked) return;
+    overlayShown = true;
+    overlayCatName.textContent = selectedCategory ? cap(selectedCategory) : 'your category';
+    pushOverlay.classList.add('show');
+  }
+
+  function hideOverlay() {
+    pushOverlay.classList.remove('show');
+  }
+
+  function hideSocialBar() {
+    if (socialBarWrap) socialBarWrap.classList.add('hidden');
+  }
+
+  /* ─────────────────────────────────────────
+     CTA CLICK — main conversion flow
+     Logic flow: IMMEDIATE redirect, Hilltop fires behind
+  ───────────────────────────────────────── */
+  ctaBtn.addEventListener('click', function (e) {
+    // Guard: must have category and not already clicked
+    if (!selectedCategory || ctaClicked) return;
+    ctaClicked = true;
+
+    // Visual feedback
+    ctaBtn.disabled  = true;
+    ctaIcon.textContent = '⏳';
+    ctaText.textContent = 'Opening trial...';
+
+    // Mark engaged at ALL exit points
+    markEngaged();
+
+    // Hilltop is bound to document clicks — fires automatically.
+    // We do NOT manually trigger it. Just delay our redirect.
+    doRedirect();
+  });
+
+  /* ─────────────────────────────────────────
+     CATEGORY BUTTONS
+     stopPropagation: intentional — prevents
+     Hilltop from firing on category select.
+     preventDefault: NOT used (no form, not needed).
+  ───────────────────────────────────────── */
+  catBtns.forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation(); // prevent Hilltop popunder on cat selection
+      selectCategory(btn.dataset.cat);
+    });
+  });
+
+  /* ─────────────────────────────────────────
+     OVERLAY — "Get Alerts" button
+     Flow: prompt OneSignal → redirect (async)
+     Redirect is guaranteed even if prompt fails.
+  ───────────────────────────────────────── */
+  overlayAlertsBtn.addEventListener('click', function () {
+    overlayAlertsBtn.disabled   = true;
+    overlayAlertsBtn.textContent = '⏳ Processing...';
+
+    markEngaged(); // set sessionStorage immediately
+
+    // Prompt OneSignal — redirect fires regardless of outcome
+    promptOneSignal(function (granted) {
+      isSubscribed = granted;
+      // Redirect fires after prompt resolves (or fails)
+      doRedirect();
+    });
+
+    // Safety net: if OneSignal stalls >5s, redirect anyway
+    setTimeout(function () {
+      if (!ctaClicked) {
+        ctaClicked = true;
+        doRedirect();
+      }
+    }, 5000);
+  });
+
+  /* ─────────────────────────────────────────
+     OVERLAY — "Not Now" button
+     Flow: IMMEDIATE redirect + Hilltop fires behind
+     markEngaged called inside doRedirect path
+  ───────────────────────────────────────── */
+  overlaySkipBtn.addEventListener('click', function () {
+    markEngaged();
+    doRedirect(); // immediate redirect, Hilltop fires behind
+  });
+
+  /* ─────────────────────────────────────────
+     PAGE INIT SEQUENCE
+     Order matters — matches logic_flow-2.txt
+  ───────────────────────────────────────── */
+  (function init() {
+    // 1. Detect device (sync, instant)
+    detectDevice();
+
+    // 2. Animate social proof counter
+    animateSocialProof();
+
+    // 3. OneSignal init — silent, no auto-prompt
+    initOneSignal();
+
+    // 4. Geo fetch (async, has timeout)
+    fetchGeo();
+
+    // 5. Pre-select category from URL param if provided
+    if (urlCat) {
+      var validCats = ['action','horror','comedy','thriller','romance','scifi'];
+      if (validCats.indexOf(urlCat) >= 0) {
+        selectCategory(urlCat);
+      }
+    }
+
+    // 6. sessionStorage check BEFORE starting any timer
+    if (isAlreadyEngaged) {
+      // User already engaged this session — skip overlay + countdown
+      stopCountdown();
+      return;
+    }
+
+    // 7. Start countdown (only for unengaged users)
+    startCountdown();
+
+    // 8. Start 8s fallback overlay timer (only for unengaged users)
+    overlayTimer = setTimeout(function () {
+      if (!selectedCategory && !overlayShown && !ctaClicked && !isAlreadyEngaged) {
+        showOverlay();
+      }
+    }, CFG.OVERLAY_DELAY);
+
+  })();
+
+})();
+</script>
+
+</body>
+</html>
