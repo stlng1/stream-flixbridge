@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- Flixbridge_v5 by claude -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>FlixBridge — Free Streaming Trials</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!--
+    OneSignal SDK – loaded with defer so it initialises silently after DOM is ready.
+    NO popunder script in <head>. Hilltop is injected lazily on CTA click only,
+    so it cannot intercept early page-interaction events.
+  -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --white: #ffffff;
+      --surface: #eef1f8;
+      --border: #dde2ef;
+      --blue: #2563eb;
+      --blue-light: #3b7eff;
+      --blue-dim: rgba(37,99,235,0.08);
+      --blue-glow: rgba(37,99,235,0.25);
+      --teal: #0ea5b0;
+      --green: #16a34a;
+      --green-dim: rgba(22,163,74,0.08);
+      --amber: #d97706;
+      --amber-dim: rgba(217,119,6,0.08);
+      --text: #0f1523;
+      --text-2: #374151;
+      --muted: #6b7280;
+      --muted-light: #9ca3af;
+      --font: 'Plus Jakarta Sans', sans-serif;
+      --radius: 12px;
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .page-wrap {
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0 12px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-icon {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--teal) 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon svg { width: 14px; height: 14px; fill: white; }
+
+    .logo-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .logo-text span { color: var(--blue); }
+
+    .ssl-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+      background: var(--green-dim);
+      border: 1px solid rgba(22,163,74,0.2);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .scarcity-bar {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(217,119,6,0.08) 0%, rgba(217,119,6,0.04) 100%);
+      border: 1px solid rgba(217,119,6,0.2);
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .scarcity-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--amber);
+      flex-shrink: 0;
+      animation: pulse-amber 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulse-amber {
+      0%,100% { box-shadow: 0 0 0 0 rgba(217,119,6,0.4); }
+      50% { box-shadow: 0 0 0 5px transparent; }
+    }
+
+    .library-scan {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .scan-text { flex: 1; z-index: 1; }
+
+    .scan-progress {
+      width: 60px; height: 4px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .scan-progress-bar {
+      width: 0%; height: 100%;
+      background: var(--blue);
+      border-radius: 4px;
+      animation: scanProgress 2s ease-out forwards;
+    }
+
+    .library-scan::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(37,99,235,0.1), transparent);
+      animation: scanShine 2s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes scanProgress {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    @keyframes scanShine {
+      0% { left: -100%; }
+      100% { left: 200%; }
+    }
+
+    .main-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #0369a1 100%);
+      padding: 20px 20px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 16px;
+      background: var(--white);
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+
+    .header-eyebrow {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 6px;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      line-height: 1.2;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    .header-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.4;
+    }
+
+    .progress-section {
+      padding: 16px 20px 0;
+    }
+
+    .steps-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 12px;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: calc(50% + 12px);
+      width: calc(100% - 24px);
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+
+    .step.done:not(:last-child)::after { background: var(--blue); }
+
+    .step-circle {
+      width: 24px; height: 24px; border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step.done .step-circle { background: var(--blue); color: white; }
+
+    .step.active .step-circle {
+      background: var(--blue); color: white;
+      box-shadow: 0 0 0 3px var(--blue-dim);
+      animation: step-pulse 1.6s infinite;
+    }
+
+    .step.pending .step-circle {
+      background: var(--surface);
+      color: var(--muted-light);
+      border: 2px solid var(--border);
+    }
+
+    @keyframes step-pulse {
+      0%,100% { box-shadow: 0 0 0 3px var(--blue-dim); }
+      50% { box-shadow: 0 0 0 6px transparent; }
+    }
+
+    .step-label {
+      font-size: 9px;
+      font-weight: 500;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .step.active .step-label, .step.done .step-label { color: var(--text-2); }
+
+    .info-section {
+      padding: 0 20px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+    }
+
+    .info-row:last-child { border-bottom: none; }
+
+    .info-icon {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: var(--blue-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .info-icon svg { width: 14px; height: 14px; stroke: var(--blue); fill: none; stroke-width: 2; }
+    .info-content { flex: 1; }
+    .info-label { font-size: 10px; color: var(--muted); font-weight: 500; }
+    .info-value { font-size: 13px; font-weight: 600; color: var(--text); }
+
+    .info-status {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .status-ok { background: var(--green-dim); color: var(--green); }
+
+    .card-body {
+      padding: 12px 20px 16px;
+    }
+
+    .guide-text {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .guide-text::before {
+      content: '1';
+      width: 18px; height: 18px;
+      background: var(--blue);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .guide-text.step-2::before { content: '2'; background: var(--green); }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .cat-btn {
+      padding: 10px 4px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-2);
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .cat-btn:hover, .cat-btn.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white;
+      box-shadow: 0 0 0 3px var(--blue-dim);
+    }
+
+    .cat-btn .emoji { display: block; font-size: 18px; margin-bottom: 2px; }
+
+    .cta-btn {
+      width: 100%;
+      padding: 14px 20px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--muted);
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: not-allowed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+
+    .cta-btn.ready {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      border-color: transparent;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 16px var(--blue-glow);
+      animation: cta-ready 2s ease-in-out infinite;
+    }
+
+    @keyframes cta-ready {
+      0%,100% { box-shadow: 0 4px 16px var(--blue-glow); }
+      50% { box-shadow: 0 4px 24px rgba(37,99,235,0.4); }
+    }
+
+    .cta-btn.ready:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(37,99,235,0.5);
+    }
+
+    .proof-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .proof-faces { display: flex; }
+
+    .face {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid var(--white);
+      margin-left: -6px;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .face:first-child { margin-left: 0; }
+    .f1 { background: #fbbf24; color: #5a3a00; }
+    .f2 { background: #34d399; color: #064e3b; }
+    .f3 { background: #60a5fa; color: #1e3a8a; }
+
+    .proof-text { font-size: 12px; color: var(--text-2); }
+    .proof-text strong { color: var(--text); }
+
+    .micro-trust {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mt-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: var(--muted-light);
+    }
+
+    .disclaimer {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 10px;
+      color: var(--muted-light);
+      line-height: 1.5;
+    }
+
+    .disclaimer a {
+      color: var(--muted);
+      text-decoration: underline;
+    }
+
+    /* ── Push overlay ── */
+    #push-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 10000;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    #push-overlay.visible {
+      display: flex;
+      opacity: 1;
+    }
+
+    #optin-banner {
+      width: 100%;
+      max-width: 400px;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      padding: 16px 20px 24px;
+      border-radius: 18px 18px 0 0;
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    #push-overlay.visible #optin-banner {
+      transform: translateY(0);
+    }
+
+    .banner-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .banner-sub-text {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .banner-btns {
+      display: flex;
+      gap: 10px;
+    }
+
+    .banner-sub-btn, .banner-later {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+      text-align: center;
+      border: none;
+    }
+
+    .banner-sub-btn {
+      background: var(--blue);
+      color: white;
+    }
+
+    .banner-later {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* ── Social bar ── */
+    #adsterra-social-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 999;
+      text-align: center;
+      display: none;
+      margin-bottom: 0 !important;
+    }
+
+    #adsterra-social-bar:not(:empty) {
+      display: block;
+    }
+
+    /* ── Toast ── */
+    #toast-message {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #10b981;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 10002;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+  <nav class="topbar">
+    <div class="logo">
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <span class="logo-text">FLIX<span>BRIDGE</span></span>
+    </div>
+    <div class="ssl-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px;">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg> SSL
+    </div>
+  </nav>
+
+  <div class="scarcity-bar">
+    <div class="scarcity-dot"></div>
+    <span>Your free trial slot expires in <strong id="countdown">4:59</strong></span>
+  </div>
+
+  <div class="library-scan" id="libraryScan">
+    <div class="scan-text">🔍 Scanning library...</div>
+    <div class="scan-progress"><div class="scan-progress-bar"></div></div>
+  </div>
+
+  <div class="main-card">
+    <div class="card-header">
+      <div class="header-eyebrow">Free Streaming Access</div>
+      <h1 class="header-title" id="headline">Watch Movies Free</h1>
+      <p class="header-sub">Start free trials to top streaming services.</p>
+    </div>
+
+    <div class="progress-section">
+      <div class="steps-row">
+        <div class="step done">
+          <div class="step-circle">✓</div>
+          <div class="step-label">Region<br>Verified</div>
+        </div>
+        <div class="step active" id="step2-indicator">
+          <div class="step-circle">2</div>
+          <div class="step-label">Pick<br>Category</div>
+        </div>
+        <div class="step pending" id="step3-indicator">
+          <div class="step-circle">3</div>
+          <div class="step-label">Start<br>Trial</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-row">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div class="info-content">
+          <div class="info-label">Location</div>
+          <div class="info-value" id="region-val">Detecting city, country...</div>
+        </div>
+        <div class="info-status status-ok">OK</div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <div class="info-content">
+          <div class="info-label">Device</div>
+          <div class="info-value" id="device-val">Checking...</div>
+        </div>
+        <div class="info-status status-ok">Secure</div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="guide-text" id="step1">Choose movie category</div>
+      <div class="category-grid">
+        <button class="cat-btn" data-cat="Action"><span class="emoji">🎬</span>Action</button>
+        <button class="cat-btn" data-cat="Horror"><span class="emoji">👻</span>Horror</button>
+        <button class="cat-btn" data-cat="Comedy"><span class="emoji">😂</span>Comedy</button>
+        <button class="cat-btn" data-cat="Thriller"><span class="emoji">🔪</span>Thriller</button>
+        <button class="cat-btn" data-cat="Romance"><span class="emoji">💕</span>Romance</button>
+        <button class="cat-btn" data-cat="Sci-Fi"><span class="emoji">🚀</span>Sci-Fi</button>
+      </div>
+      <div class="guide-text step-2" id="step2-text" style="display:none;">Claim your free trial</div>
+      <div class="proof-card">
+        <div class="proof-faces">
+          <div class="face f1">A</div>
+          <div class="face f2">K</div>
+          <div class="face f3">T</div>
+        </div>
+        <div class="proof-text"><strong id="proof-num">1,204</strong> people claimed today</div>
+      </div>
+      <button class="cta-btn" id="main-cta" disabled>
+        <span>👆</span> Select a category above
+      </button>
+      <div class="micro-trust">
+        <div class="mt-item">✓ No credit card</div>
+        <div class="mt-item">✓ Cancel anytime</div>
+        <div class="mt-item">🔒 256-bit</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="disclaimer">
+    By continuing you agree to our <a href="/terms.html" target="_blank">Terms of Use</a>
+    and <a href="/privacy.html" target="_blank">Privacy Policy</a>.<br>
+    Free trials are offered by third-party streaming services.
+  </p>
+</div>
+
+<!-- Custom push-permission overlay (replaces native browser prompt entirely) -->
+<div id="push-overlay">
+  <div id="optin-banner">
+    <div class="banner-title">🔔 Never Miss a Free Trial</div>
+    <div class="banner-sub-text">Get alerts when new streaming services offer free access</div>
+    <div class="banner-btns">
+      <button class="banner-sub-btn" id="banner-subscribe">Get Alerts</button>
+      <button class="banner-later"   id="banner-later">Not Now</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-message"></div>
+<div id="adsterra-social-bar"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── CONFIGURATION ──────────────────────────────────────────────────────────
+  const ONESIGNAL_APP_ID   = 'a6b51351-68e7-4ba0-99da-ac0690420396'; // ← replace with your real OneSignal App ID
+  const SMARTLINK_URL      = 'https://dyingefforlessefforlessours.com/hay2nfrvgi?key=d9100aaee0c048fb0bf83fc999956b88';
+  const DIRECT_OFFER_TIER1 = 'https://your-direct-offer.com/offer?geo={country}'; // ← replace or leave placeholder
+  const TIER1_COUNTRIES    = ['US', 'GB', 'UK', 'AU', 'CA', 'DE'];
+
+  /*
+   * Hilltop popunder script.
+   * Injected lazily – only AFTER the CTA click gesture – so it cannot attach
+   * global document listeners that would intercept category-button clicks.
+   * Once loaded it fires organically on the very next click (a banner button),
+   * opening the popunder in a new window behind the current tab.
+   */
+  const HILLTOP_SRC = '//slimgather.com/cAD.9F6HbI2x5klgSyWUQO9SN/zSAEyrNJTgkEzEM_yD0f3-MLDyIu1AODTIMC3T';
+
+  // ── STATE ──────────────────────────────────────────────────────────────────
+  let countryCode      = '';
+  let userCity         = '';
+  let selectedCategory = '';
+  let engaged          = false;  // true once CTA is clicked
+  let isSubscribed     = false;  // true if OneSignal subscription already exists
+  let overlayShown     = false;
+  let fallbackTimer    = null;
+  let hilltopLoaded    = false;  // guard – inject script only once
+
+  // ── URL PARAMS ─────────────────────────────────────────────────────────────
+  const urlParams    = new URLSearchParams(window.location.search);
+  const clickId      = urlParams.get('click_id')  || '';
+  const sourceId     = urlParams.get('source_id') || urlParams.get('var1') || '';
+  const urlDevice    = urlParams.get('device')    || '';
+  const urlBrand     = urlParams.get('brand')     || '';
+  const urlCategory  = urlParams.get('cat')       || '';
+  const urlRegion    = urlParams.get('region')    || '';
+  const urlCity      = urlParams.get('city')      || '';
+
+  // ── DEVICE DETECTION ───────────────────────────────────────────────────────
+  const ua         = navigator.userAgent || '';
+  const isIOS      = /iPhone|iPad|iPod/i.test(ua);
+  const isAndroid  = /Android/i.test(ua);
+  const deviceType = urlDevice || urlBrand || (isIOS ? 'iPhone' : isAndroid ? 'Android' : 'Desktop');
+  document.getElementById('device-val').textContent = deviceType;
+  console.log('[Init] Device:', deviceType, '| iOS:', isIOS, '| Android:', isAndroid);
+
+  // ── GEOLOCATION ────────────────────────────────────────────────────────────
+  async function fetchGeo() {
+    try {
+      const resp = await fetch('https://ipapi.co/json/');
+      const data = await resp.json();
+      userCity    = urlCity || data.city || '';
+      countryCode = (data.country_code || '').toUpperCase();
+      const loc   = (userCity && data.country_name)
+        ? `${userCity}, ${data.country_name}`
+        : (userCity || data.country_name || data.region || 'International');
+      document.getElementById('region-val').textContent = loc;
+      console.log('[Geo]', loc, '|', countryCode);
+    } catch (e) {
+      document.getElementById('region-val').textContent = urlRegion || urlCity || 'International';
+      countryCode = urlParams.get('country') || 'US';
+      console.warn('[Geo] Fallback –', e.message);
+    }
+  }
+  fetchGeo();
+
+  // ── SCAN ANIMATION ─────────────────────────────────────────────────────────
+  setTimeout(() => {
+    const scan = document.getElementById('libraryScan');
+    if (scan) scan.style.display = 'none';
+  }, 2000);
+
+  // ── COUNTDOWN ──────────────────────────────────────────────────────────────
+  let secs = 299;
+  const cdEl = document.getElementById('countdown');
+  const cdInterval = setInterval(() => {
+    secs--;
+    if (secs <= 0) { clearInterval(cdInterval); if (cdEl) cdEl.textContent = '0:00'; return; }
+    const m = Math.floor(secs / 60), s = secs % 60;
+    if (cdEl) cdEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+  }, 1000);
+
+  // ── SOCIAL PROOF ───────────────────────────────────────────────────────────
+  const proofs = [1093, 1204, 987, 1456, 1322, 1156, 1389];
+  document.getElementById('proof-num').textContent =
+    proofs[Math.floor(Math.random() * proofs.length)].toLocaleString();
+
+  // ── DOM REFS ───────────────────────────────────────────────────────────────
+  const ctaBtn    = document.getElementById('main-cta');
+  const headline  = document.getElementById('headline');
+  const step1El   = document.getElementById('step1');
+  const step2Text = document.getElementById('step2-text');
+  const step2Ind  = document.getElementById('step2-indicator');
+  const step3Ind  = document.getElementById('step3-indicator');
+  const catBtns   = document.querySelectorAll('.cat-btn');
+  const overlay   = document.getElementById('push-overlay');
+
+  // ── CATEGORY SELECTION ─────────────────────────────────────────────────────
+  function selectCategory(cat) {
+    selectedCategory = cat;
+    console.log('[Category] Selected:', cat);
+    catBtns.forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+    step2Ind.className = 'step done';
+    step2Ind.querySelector('.step-circle').innerHTML = '✓';
+    step3Ind.className = 'step active';
+    headline.textContent = `Watch ${cat} Free`;
+    step1El.style.display  = 'none';
+    step2Text.style.display = 'flex';
+    ctaBtn.disabled = false;
+    ctaBtn.classList.add('ready');
+    ctaBtn.innerHTML = '<span>🚀</span> Start Free Trial — Expires Soon';
+    // Engaging with a category cancels the unengaged fallback timer
+    if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
+  }
+
+  /*
+   * Category buttons use CAPTURE-phase listeners (third arg = true) so they
+   * run before any bubble-phase handler Hilltop might attach to document later.
+   * stopPropagation() prevents Hilltop from seeing these clicks at all.
+   */
+  catBtns.forEach(btn => {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      selectCategory(btn.dataset.cat);
+    }, true);
+  });
+
+  // URL-parameter pre-selection
+  if (urlCategory) {
+    let matched = false;
+    catBtns.forEach(btn => {
+      if (btn.dataset.cat.toLowerCase() === urlCategory.toLowerCase()) {
+        selectCategory(btn.dataset.cat); matched = true;
+      }
+    });
+    if (!matched) selectCategory(urlCategory);
+  }
+
+  // ── BUILD OFFER URL ────────────────────────────────────────────────────────
+  function getOfferUrl() {
+    const isTier1 = TIER1_COUNTRIES.includes(countryCode);
+    let base = SMARTLINK_URL;
+    if (isTier1 && DIRECT_OFFER_TIER1 && !DIRECT_OFFER_TIER1.includes('your-direct-offer')) {
+      base = DIRECT_OFFER_TIER1.replace('{country}', countryCode);
+    }
+    const sep = base.includes('?') ? '&' : '?';
+    return `${base}${sep}clickid=${encodeURIComponent(clickId)}&source=${encodeURIComponent(sourceId)}&cat=${encodeURIComponent(selectedCategory || 'none')}&device=${encodeURIComponent(deviceType)}&country=${encodeURIComponent(countryCode)}&city=${encodeURIComponent(userCity)}`;
+  }
+
+  // ── HILLTOP POPUNDER (lazy injection) ─────────────────────────────────────
+  function loadHilltopPopunder() {
+    if (hilltopLoaded) { console.log('[Hilltop] Already loaded'); return; }
+    hilltopLoaded = true;
+    console.log('[Hilltop] Injecting script...');
+    var s = document.createElement('script');
+    s.src = HILLTOP_SRC;
+    s.async = true;
+    s.referrerPolicy = 'no-referrer-when-downgrade';
+    document.head.appendChild(s);
+    /*
+     * After injection Hilltop hooks document clicks.  The popunder opens
+     * automatically on the next click gesture (one of the banner buttons).
+     * It uses window.open() internally, creating a new background tab/window –
+     * that IS the popunder.  The main page navigates via location.href below.
+     */
+  }
+
+  // ── HARD REDIRECT (replaces current page with offer) ──────────────────────
+  /*
+   * We use location.href so the main tab navigates TO the offer.
+   * Hilltop's window.open() will have already opened behind it as the popunder.
+   * A short delay (100ms) gives Hilltop's window.open() time to execute before
+   * the page unloads, ensuring the popunder actually opens.
+   */
+  function redirectToOffer() {
+    const url = getOfferUrl();
+    console.log('[Redirect] Navigating to offer in 100ms:', url.substring(0, 60) + '...');
+    setTimeout(() => {
+      location.href = url;
+    }, 100);
+  }
+
+  // ── TOAST ──────────────────────────────────────────────────────────────────
+  function showToast(msg, dur) {
+    dur = dur || 3000;
+    const t = document.getElementById('toast-message');
+    if (!t) return;
+    t.textContent = msg;
+    t.style.opacity = '1';
+    setTimeout(() => { t.style.opacity = '0'; }, dur);
+  }
+
+  // ── ONESIGNAL – SILENT INIT, ZERO AUTO-PROMPTS ────────────────────────────
+  /*
+   * OneSignal is initialised on page load purely to:
+   *   1. Check if this browser is already subscribed (skip overlay if so).
+   *   2. Receive the optIn() call from our "Get Alerts" button later.
+   *
+   * Every built-in prompt surface is disabled.  The ONLY moment we ever call
+   * optIn() is inside the "Get Alerts" click handler – a direct user gesture –
+   * which satisfies the browser's permission-request requirement.  The native
+   * browser dialog appears exactly once (first visit); subsequent visits are
+   * already subscribed and bypass the overlay entirely.
+   */
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function (OneSignal) {
+    if (!ONESIGNAL_APP_ID || ONESIGNAL_APP_ID === 'ONE-SIGNAL-APP-ID') {
+      console.warn('[OneSignal] App ID not configured – push disabled'); return;
+    }
+    if (location.protocol !== 'https:') {
+      console.warn('[OneSignal] Requires HTTPS – skipping'); return;
+    }
+    try {
+      await OneSignal.init({
+        appId:           ONESIGNAL_APP_ID,
+        notifyButton:    { enable: false },   // hide the bell widget
+        autoResubscribe: false,               // never prompt returning users automatically
+        promptOptions: {
+          slidedown:   { enabled: false },    // no slidedown prompt
+          native:      { enabled: false },    // no auto native prompt
+          customlink:  { enabled: false }     // no custom-link prompt
+        }
+      });
+
+      // Belt-and-suspenders: programmatically disable slidedown if API exists
+      if (OneSignal.Slidedown && typeof OneSignal.Slidedown.disable === 'function') {
+        OneSignal.Slidedown.disable();
+      }
+
+      isSubscribed = !!(await OneSignal.User.PushSubscription.optedIn);
+      console.log('[OneSignal] Ready | already subscribed:', isSubscribed);
+
+      // If already subscribed there is no need to show the overlay at all
+      if (isSubscribed && fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
+
+    } catch (e) {
+      console.error('[OneSignal] Init error:', e.message);
+    }
+  });
+
+  // ── OVERLAY HELPERS ────────────────────────────────────────────────────────
+  function showPushOverlay() {
+    // Skip if already shown this session, or user is already a subscriber
+    if (overlayShown || isSubscribed) {
+      console.log('[Overlay] Skipped – shown:', overlayShown, '| subscribed:', isSubscribed);
+      return false;
+    }
+    overlayShown = true;
+    if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
+    overlay.style.display = 'flex';
+    // Double rAF: ensures display:flex is committed to layout before transition starts
+    requestAnimationFrame(() => requestAnimationFrame(() => overlay.classList.add('visible')));
+    console.log('[Overlay] Shown');
+    return true;
+  }
+
+  function hidePushOverlay() {
+    overlay.classList.remove('visible');
+    setTimeout(() => { overlay.style.display = 'none'; }, 400);
+    console.log('[Overlay] Hidden');
+  }
+
+  // ── ONESIGNAL OPT-IN ──────────────────────────────────────────────────────
+  /*
+   * Called ONLY from the "Get Alerts" button click – a genuine user gesture.
+   * Flow:
+   *   1. optIn() → browser shows its one-time native permission dialog
+   *   2. User clicks Allow → browser grants permission → OneSignal registers
+   *      the subscription and it appears in the OneSignal dashboard immediately
+   *   3. We tag the subscriber with geo/category/device/source metadata
+   *
+   * We do NOT await this before redirecting – the registration completes
+   * asynchronously even as the page navigates away (the service worker handles
+   * the final handshake independently of the page lifecycle).
+   */
+  function requestPushOptIn() {
+    if (isSubscribed || !window.OneSignal) {
+      console.log('[OneSignal] Skipping optIn – already subscribed or SDK unavailable');
+      return;
+    }
+    // Fire-and-forget: we do not block the redirect on this
+    window.OneSignal.User.PushSubscription.optIn()
+      .then(async () => {
+        isSubscribed = true;
+        try {
+          await window.OneSignal.User.addTags({
+            geo:      `${userCity},${countryCode}`,
+            category: selectedCategory || 'none',
+            device:   deviceType,
+            source:   sourceId || 'organic'
+          });
+          console.log('[OneSignal] Subscribed + tagged');
+        } catch (tagErr) {
+          console.warn('[OneSignal] Tagging failed (subscription still recorded):', tagErr.message);
+        }
+      })
+      .catch(e => {
+        // User denied, or browser blocked – subscription not created, flow continues
+        console.warn('[OneSignal] optIn rejected/denied:', e.message);
+      });
+  }
+
+  // ── BANNER BUTTONS ─────────────────────────────────────────────────────────
+  /*
+   * "Not Now" → Hilltop popunder fires on this gesture → main page redirects
+   * "Get Alerts" → OneSignal optIn() called (fire-and-forget) →
+   *                Hilltop popunder fires on this gesture → main page redirects
+   *
+   * In both cases Hilltop's window.open() runs synchronously within the click
+   * event, opening the popunder behind.  redirectToOffer() then navigates the
+   * main tab to the offer after 100ms (giving Hilltop time to open).
+   */
+  document.getElementById('banner-later').addEventListener('click', function () {
+    console.log('[Banner] Declined – redirecting');
+    hidePushOverlay();
+    // Hilltop fires organically on this click (no extra call needed)
+    redirectToOffer();
+  });
+
+  document.getElementById('banner-subscribe').addEventListener('click', function () {
+    console.log('[Banner] Allowed – subscribing + redirecting');
+    hidePushOverlay();
+    requestPushOptIn();  // fire-and-forget; browser permission dialog appears
+    // Hilltop fires organically on this click
+    redirectToOffer();   // 100ms delay lets Hilltop's window.open() complete first
+  });
+
+  // ── CTA CLICK – ENGAGED PATH ───────────────────────────────────────────────
+  ctaBtn.addEventListener('click', function () {
+    if (!selectedCategory || engaged) return;
+    engaged = true;
+    clearInterval(cdInterval);
+    console.log('[CTA] Clicked | cat:', selectedCategory, '| device:', deviceType);
+
+    ctaBtn.innerHTML     = '<span>⏳</span> Processing...';
+    ctaBtn.style.opacity = '0.8';
+    ctaBtn.disabled      = true;
+
+    /*
+     * Inject Hilltop inside the CTA gesture so it is ready to intercept the
+     * very next click (the banner button).  Our category listeners are already
+     * registered in capture phase so they remain unaffected.
+     */
+    loadHilltopPopunder();
+
+    // iOS: push notifications are not supported in most iOS browsers.
+    // Skip the overlay and redirect immediately.
+    if (isIOS) {
+      console.log('[CTA → iOS] No push overlay – redirecting directly');
+      redirectToOffer();
+      return;
+    }
+
+    // Non-iOS: show the overlay; the banner button click drives everything else
+    const shown = showPushOverlay();
+    if (!shown) {
+      // Already subscribed or overlay already shown this session
+      console.log('[CTA → Non-iOS] Overlay skipped – redirecting');
+      redirectToOffer();
+    }
+  });
+
+  // ── FALLBACK TIMER – UNENGAGED PATH (8 s, non-iOS only) ───────────────────
+  /*
+   * If the user hasn't clicked the CTA after 8 seconds:
+   *   • Load Hilltop now so it's ready for the banner button gesture
+   *   • Show the overlay – same logic applies once they tap a banner button
+   */
+  if (!isIOS) {
+    fallbackTimer = setTimeout(() => {
+      if (!engaged && !overlayShown && !isSubscribed) {
+        console.log('[Fallback] 8s elapsed – loading Hilltop + showing overlay');
+        loadHilltopPopunder();
+        showPushOverlay();
+      }
+    }, 8000);
+  }
+
+  // ── PAGE UNLOAD CLEANUP ────────────────────────────────────────────────────
+  window.addEventListener('beforeunload', () => {
+    if (fallbackTimer) clearTimeout(fallbackTimer);
+    clearInterval(cdInterval);
+  });
+
+  // ── SOCIAL BAR (Adsterra) ─────────────────────────────────────────────────
+  (function initSocialBar() {
+    const container = document.getElementById('adsterra-social-bar');
+    if (!container) return;
+    const obs = new MutationObserver(() => {
+      if (container.children.length > 0) {
+        container.style.display = 'block';
+        console.log('[SocialBar] Live');
+        obs.disconnect();
+      }
+    });
+    obs.observe(container, { childList: true, subtree: true });
+    setTimeout(() => {
+      if (container.children.length === 0) {
+        console.log('[SocialBar] No fill after 7s – geo not monetised');
+        obs.disconnect();
+      }
+    }, 7000);
+  })();
+
+  console.log('[Init] FlixBridge v5 | Flow: CTA → overlay → (opt-in + Hilltop popunder) → location.href offer');
+})();
+</script>
+
+<!-- Adsterra Social Bar (async – won't block page or intercept gestures) -->
+<script data-cfasync="false" src="https://dyingefforlessefforlessours.com/9d/98/cc/9d98cc51460a555068d0d0f908b52a95.js" async></script>
+
+</body>
+</html>
